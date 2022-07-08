@@ -1,0 +1,3544 @@
+.\" Man page generated from reStructuredText.
+.
+.TH "TODO" "1" "April 09, 2016" "0.2" "AgentDan"
+.SH NAME
+Todo \- AgentDan Documentation
+.
+.nr rst2man-indent-level 0
+.
+.de1 rstReportMargin
+\\$1 \\n[an-margin]
+level \\n[rst2man-indent-level]
+level margin: \\n[rst2man-indent\\n[rst2man-indent-level]]
+-
+\\n[rst2man-indent0]
+\\n[rst2man-indent1]
+\\n[rst2man-indent2]
+..
+.de1 INDENT
+.\" .rstReportMargin pre:
+. RS \\$1
+. nr rst2man-indent\\n[rst2man-indent-level] \\n[an-margin]
+. nr rst2man-indent-level +1
+.\" .rstReportMargin post:
+..
+.de UNINDENT
+. RE
+.\" indent \\n[an-margin]
+.\" old: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.nr rst2man-indent-level -1
+.\" new: \\n[rst2man-indent\\n[rst2man-indent-level]]
+.in \\n[rst2man-indent\\n[rst2man-indent-level]]u
+..
+.sp
+Contents
+.TS
+center;
+||.
+_
+.TE
+.SH INTRODUCTION
+.SS Introduction to AgentDan
+.sp
+AgentDan was developed to fill a gap in the monitoring and alerting capabilities of streaming and packaging services. Currently, the only monitoring capability available is via MIBs and Solarwinds. This method only allows the monitoring of the underlying Linux operating system and not the actual services provided by the server. With AgentDan, you can monitor the streaming and packaging capabilities of these servers, as well as generate alerting via PagerDuty to all on duty operators and engineers within a defined alerting service.
+.SH USAGE
+.SS Working with AgentDan
+.INDENT 0.0
+.INDENT 3.5
+.SS Todo
+.sp
+How to use and/or extended AgentDan functionality.
+.UNINDENT
+.UNINDENT
+.SH AGENTDAN PACKAGE
+.SS Package contents
+.sp
+Define AgentDan package contents
+.INDENT 0.0
+.TP
+.B class AgentDan.ConfigFile(fp)
+.INDENT 7.0
+.TP
+.B class ConfigFile
+.UNINDENT
+.sp
+A class library to create an instance of ConfigFile for configuration information
+.INDENT 7.0
+.TP
+.B ConfigFile.getConfig(section)
+.INDENT 7.0
+.TP
+.B getConfig(section)
+.UNINDENT
+.sp
+Return a dictionary of config name and config value within provided section
+.INDENT 7.0
+.TP
+.B Parameters
+\fBsection\fP (\fIstr\fP) \-\- Section within configuration file to retrieve key/value pair
+.TP
+.B Returns
+Dictionary containing config item name and value
+.TP
+.B Return type
+dict{\(aqitem key\(aq,\(aqitem value\(aq}
+.TP
+.B Raises
+.INDENT 7.0
+.IP \(bu 2
+\fBConfigParser.NoSectionError\fP \-\- Section does not exists in configuration file
+.IP \(bu 2
+\fBNameError\fP \-\- Key does not exists in section of configuration file
+.IP \(bu 2
+\fBTypeError\fP \-\- Value type is incorrect for requested key
+.IP \(bu 2
+\fBException\fP \-\- General exception with logged results
+.UNINDENT
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> Config = ConfigFile(\(aqDevice.conf\(aq)
+>>> pdConfig = Config.getConfig(\(aqPagerDuty\(aq)
+>>> subdomain = pdConfig[\(aqsubdomain\(aq]
+>>> print subdomain
+encompass\-digital\-media
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B ConfigFile.getState()
+.INDENT 7.0
+.TP
+.B getState()
+.UNINDENT
+.sp
+Return a dictionary created from a JSON file containing 
+channel and previous states for devices and monitored channels 
+defined in Device.conf
+.INDENT 7.0
+.TP
+.B Returns
+JSON string containing read from JSON file
+.TP
+.B Return type
+str
+.TP
+.B Raises
+.INDENT 7.0
+.IP \(bu 2
+\fBIOError\fP \-\- JSON file does not exists, so create it and return empty lastState dictionary
+.IP \(bu 2
+\fBValueError\fP \-\- JSON string in file is mailformed or empty, so return empty lastState dictionary
+.IP \(bu 2
+\fBException\fP \-\- General exception with logged results
+.UNINDENT
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> cf = ConfigFile(\(aqconductor.json\(aq)
+>>> lastState = cf.getState()
+>>> print lastState
+{u\(aq10.16.27.20\(aq: {u\(aq11\(aq: u\(aqrunning\(aq, u\(aq10\(aq: u\(aqrunning\(aq, u\(aq13\(aq: u\(aqrunning\(aq, u\(aq12\(aq: u\(aqrunning\(aq, u\(aq15\(aq: u\(aqrunning\(aq, u\(aq14\(aq: u\(aqrunning\(aq, u\(aq17\(aq: u\(aqrunning\(aq, u\(aq16\(aq: u\(aqrunning\(aq, u\(aq19\(aq: u\(aqrunning\(aq, u\(aq18\(aq: u\(aqrunning\(aq, u\(aq6\(aq: u\(aqrunning\(aq, u\(aq22\(aq: u\(aqrunning\(aq, u\(aq5\(aq: u\(aqrunning\(aq, u\(aq8\(aq: u\(aqrunning\(aq, u\(aq7\(aq: u\(aqrunning\(aq, u\(aq24\(aq: u\(aqrunning\(aq, u\(aq9\(aq: u\(aqrunning\(aq, u\(aq20\(aq: u\(aqrunning\(aq, u\(aq23\(aq: u\(aqrunning\(aq, u\(aq21\(aq: u\(aqrunning\(aq}}
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B ConfigFile.setState(currentState)
+.INDENT 7.0
+.TP
+.B setState()
+.UNINDENT
+.sp
+Write a dictionary to a JSON file containing 
+channel and previous states for devices and monitored channels 
+defined in Device.conf
+.INDENT 7.0
+.TP
+.B Returns
+List contain status code and status message of state write to file
+.TP
+.B Return type
+list
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> cf = ConfigFile(\(aqconductor.json\(aq)
+>>> lastState = cf.getState()
+>>> print lastState
+{u\(aq10.16.27.20\(aq: {u\(aq11\(aq: u\(aqrunning\(aq, u\(aq10\(aq: u\(aqrunning\(aq, u\(aq13\(aq: u\(aqrunning\(aq, u\(aq12\(aq: u\(aqrunning\(aq, u\(aq15\(aq: u\(aqrunning\(aq, u\(aq14\(aq: u\(aqrunning\(aq, u\(aq17\(aq: u\(aqrunning\(aq, u\(aq16\(aq: u\(aqrunning\(aq, u\(aq19\(aq: u\(aqrunning\(aq, u\(aq18\(aq: u\(aqrunning\(aq, u\(aq6\(aq: u\(aqrunning\(aq, u\(aq22\(aq: u\(aqrunning\(aq, u\(aq5\(aq: u\(aqrunning\(aq, u\(aq8\(aq: u\(aqrunning\(aq, u\(aq7\(aq: u\(aqrunning\(aq, u\(aq24\(aq: u\(aqrunning\(aq, u\(aq9\(aq: u\(aqrunning\(aq, u\(aq20\(aq: u\(aqrunning\(aq, u\(aq23\(aq: u\(aqrunning\(aq, u\(aq21\(aq: u\(aqrunning\(aq}}
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B class AgentDan.Connect(service=\(aq\(aq)
+.INDENT 7.0
+.TP
+.B class Connect
+.UNINDENT
+.sp
+A generic class library to support connections to various RESTful APIs
+.INDENT 7.0
+.TP
+.B Connect.get(path, payload, address=\(aq\(aq)
+.INDENT 7.0
+.TP
+.B get(path, payload, address=)
+.UNINDENT
+.sp
+Returns a json string containing the results of the API query
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBpath\fP (\fIstr\fP) \-\- URL path to the API resource
+.IP \(bu 2
+\fBpayload\fP (\fIstr\fP) \-\- JSON formatted API parameters
+.UNINDENT
+.TP
+.B Returns
+Status code of request and the JSON formatted response from API
+.TP
+.B Return type
+dict{\(aqstatus_code\(aq,\(aqJSON string\(aq}
+.TP
+.B Raises
+.INDENT 7.0
+.IP \(bu 2
+\fBConnectionError\fP \-\- In case of network problem (e.g. DNS failure, refused connection, etc)
+.IP \(bu 2
+\fBHTTPError\fP \-\- In the event of the rare invalid HTTP response
+.IP \(bu 2
+\fBTooManyRedirects\fP \-\- If a request times out, a Timeout exception is raised. If a request exceeds the configured number of maximum redirections
+.IP \(bu 2
+\fBException\fP \-\- General exception with logged results
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.INDENT 3.5
+.SS Todo
+.sp
+Handle Connection, HTTP and Redirects exceptions.
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> import requests
+>>> import json
+>>> import datetime
+>>> from Connect import Connect
+>>> days = 1
+>>> path = \(aq/api/v1/incidents\(aq
+>>> since = datetime.datetime.now() \- datetime.timedelta(days=days)
+>>> since = since.strftime(\(aq%Y\-%m\-%d\(aq)
+>>> until = datetime.datetime.now().strftime(\(aq%Y\-%m\-%d\(aq)
+>>> status = \(aqresolved\(aq
+>>> payload = {\(aqsince\(aq:since,\(aquntil\(aq:until,\(aqstatus\(aq:status}
+>>> con = Connect(\(aqPagerDuty\(aq)
+>>> status, response = con.get(path, payload)                
+>>> print status
+200
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Connect.post(payload)
+.INDENT 7.0
+.TP
+.B post(path, payload)
+.UNINDENT
+.sp
+Post a json string update to an API query
+.INDENT 7.0
+.TP
+.B Parameters
+\fBpayload\fP (\fIstr\fP) \-\- JSON formatted API parameters
+.TP
+.B Returns
+Status code of request and the JSON formatted response from API
+.TP
+.B Return type
+dict{\(aqstatus_code\(aq,\(aqJSON string\(aq}
+.TP
+.B Raises
+.INDENT 7.0
+.IP \(bu 2
+\fBConnectionError\fP \-\- In case of network problem (e.g. DNS failure, refused connection, etc)
+.IP \(bu 2
+\fBHTTPError\fP \-\- In the event of the rare invalid HTTP response
+.IP \(bu 2
+\fBTooManyRedirects\fP \-\- If a request times out, a Timeout exception is raised. If a request exceeds the configured number of maximum redirections
+.IP \(bu 2
+\fBException\fP \-\- General exception with logged results
+.UNINDENT
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> import requests
+>>> import json
+>>> import datetime
+>>> from Connect import Connect
+>>> days = 1
+>>> path = \(aq/api/v1/incidents\(aq
+>>> payload = json.dumps({"service_key": \(aqbr549\(aq, "incident_key": \(aqnonexist\(aq, "event_type": \(aqresolve\(aq, "description": \(aqdoctest\(aq, "details": \(aqnone\(aq,})
+>>> con = Connect(\(aqPagerDuty\(aq)
+>>> status = con.post(payload)
+>>> print status[0]
+400
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B class AgentDan.PagerDuty
+.INDENT 7.0
+.TP
+.B class PagerDuty
+.UNINDENT
+.sp
+A class library to enable integration with PagerDuty API
+.INDENT 7.0
+.TP
+.B PagerDuty.getAlerts(days)
+.INDENT 7.0
+.TP
+.B getAlerts(days)
+.UNINDENT
+.sp
+Retrieve a list of alerts via PagerDuty API
+.INDENT 7.0
+.TP
+.B Parameters
+\fBdays\fP (\fIstr\fP) \-\- Number of days to query for results
+.TP
+.B Returns
+JSON string (JSON string)
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> pd = PagerDuty()
+>>> alerts = pd.getAlerts(1)
+>>> print type(alerts)
+<type \(aqlist\(aq>
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B PagerDuty.getIncidents(days, urgency=\(aq\(aq, status=\(aq\(aq)
+.INDENT 7.0
+.TP
+.B getIncidents(days, urgency=\(aq\(aq, status=\(aq\(aq)
+.UNINDENT
+.sp
+Retrieve a list of incidents via PagerDuty API
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBdays\fP (\fIstr\fP) \-\- Number of days to query for results
+.IP \(bu 2
+\fBurgency\fP (\fIstr\fP) \-\- Optional Urgency to query Possible values (high, low)
+.IP \(bu 2
+\fBstatus\fP (\fIstr\fP) \-\- Optional Status to query. Possible values (triggered, acknowledged, resolved)
+.UNINDENT
+.TP
+.B Returns
+JSON string (JSON string)
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> pd = PagerDuty()
+>>> incidents = pd.getIncidents(1)
+>>> print type(incidents)
+<type \(aqlist\(aq>
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B PagerDuty.resolve(incident_key, description, details)
+.INDENT 7.0
+.TP
+.B resolve(incident_key, description, details)
+.UNINDENT
+.sp
+Resolve an incident through PagerDuty API via Connect module
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBincident_key\fP \-\- A unique string which provides de\-duplication
+.IP \(bu 2
+\fBdescription\fP (\fIstr\fP) \-\- A detailed description of the resolution
+.IP \(bu 2
+\fBdetails\fP (\fIstr\fP) \-\- Full details regarding incident resolution
+.UNINDENT
+.TP
+.B Returns
+JSON string (JSON string)
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> #pd = PagerDuty()
+>>> #incident_key = "srv01/HTTP"
+>>> #description = "Channel {0} is currently {1} on {2}".format(\(aq21\(aq,\(aqrunning\(aq,\(aq10.16.27.20\(aq)
+>>> #details = {"Resolved at":"2016\-03\-18 16:00",}
+>>> #trigstat, trigres = pd.resolve(incident_key, description, details)
+>>> #trigres = json.loads(trigres)
+>>> #print trigres
+{u\(aqstatus\(aq: u\(aqsuccess\(aq, u\(aqmessage\(aq: u\(aqEvent processed\(aq, u\(aqincident_key\(aq: u\(aqsrv01/HTTP\(aq}
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B PagerDuty.trigger(incident_key, description, client, url, details)
+.INDENT 7.0
+.TP
+.B trigger(incident_key, description, client, url, details)
+.UNINDENT
+.sp
+Trigger an incident through PagerDuty API via Connect module
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBincident_key\fP \-\- A unique string which provides de\-duplication
+.IP \(bu 2
+\fBdescription\fP (\fIstr\fP) \-\- A detailed description of the incident
+.IP \(bu 2
+\fBclient\fP (\fIstr\fP) \-\- Affected device name
+.IP \(bu 2
+\fBurl\fP (\fIstr\fP) \-\- URL to affected device adminstrative interface
+.IP \(bu 2
+\fBdetails\fP (\fIstr\fP) \-\- Full details regarding the initial event that triggered this incident
+.UNINDENT
+.TP
+.B Returns
+JSON string (JSON string)
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> #pd = PagerDuty()
+>>> #incident_key = "srv01/HTTP"
+>>> #description = "Channel {0} is currently {1} on {2}".format(\(aq21\(aq,\(aqidle\(aq,\(aq10.16.27.20\(aq)
+>>> #client = "SkyMX Conductor"
+>>> #url = "http://10.16.27.20"
+>>> #details = {"hls\-source": "http://10.16.27.221/out/u/skymx_ch21.m3u8","udl\-dest1":"udp://230.16.28.20:52101",}
+>>> #trigstat, trigres = pd.trigger(incident_key, description, client, url, details)
+>>> #trigres = json.loads(trigres)
+>>> #print trigres
+{u\(aqstatus\(aq: u\(aqsuccess\(aq, u\(aqmessage\(aq: u\(aqEvent processed\(aq, u\(aqincident_key\(aq: u\(aqsrv01/HTTP\(aq}
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B class AgentDan.User(userid, name, email, time_zone, color, role, avatar_url, user_url, invitation_sent)
+.INDENT 7.0
+.TP
+.B class User
+.UNINDENT
+.sp
+A class library to create an instance of User supporting PagerDuty responses
+.UNINDENT
+.INDENT 0.0
+.TP
+.B class AgentDan.Alert(alertId, alertType, started_at, user, address=\(aq\(aq)
+.INDENT 7.0
+.TP
+.B class Alert
+.UNINDENT
+.sp
+A class library to provide access to PagerDuty generated alerts
+.UNINDENT
+.INDENT 0.0
+.TP
+.B class AgentDan.Incident(incident_number, status, urgency, created_on, html_url, incident_key, service, escalation_policy, last_status_change_by, last_status_change_on, trigger_summary_data, trigger_details_html_url, pending_actions=[], assigned_to=[])
+.INDENT 7.0
+.TP
+.B class Incident
+.UNINDENT
+.sp
+A class library to provide PagerDuty Inicident datatype
+.UNINDENT
+.INDENT 0.0
+.TP
+.B class AgentDan.Conductor
+.INDENT 7.0
+.TP
+.B class Conductor
+.UNINDENT
+.sp
+A generic class library to create an instance of Conductor for monitoring and configuration
+.INDENT 7.0
+.TP
+.B Conductor.checkStatus()
+Class method to retrieve individual channels from Conductor and
+compare last state to current state. Based on comparison, trigger
+or resolve alerts based on incident_key
+.INDENT 7.0
+.TP
+.B Returns
+A list containing a status code and status message
+.TP
+.B Return type
+list
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ec = Conductor()
+>>> status, results = ec.checkStatus()
+>>> print results
+Conductor: Check completed successfully!
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Conductor.getChannel()
+Class method to retrieve individual channel attributes
+.INDENT 7.0
+.TP
+.B Returns
+A dictionary for each Conductor containing a dictionary of a channels details
+.TP
+.B Return type
+dict
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ec = Conductor()
+>>> results = ec.getChannel()
+>>> print type(results)
+<type \(aqdict\(aq>
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Conductor.getChannels()
+Class method to retrieve list of channel from all configured Elemental Conductors
+.INDENT 7.0
+.TP
+.B Returns
+A dictionary for each Conductor containing a dictionary of each channels details
+.TP
+.B Return type
+dict
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ec = Conductor()
+>>> results = ec.getChannels()
+>>> print results[\(aq10.16.27.20\(aq][0]
+200
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Conductor.getConductors()
+.INDENT 7.0
+.TP
+.B getConductors()
+.UNINDENT
+.sp
+Returns the device names and addresses from the configuration file section defined for [Elemental Conductor]
+.INDENT 7.0
+.TP
+.B Returns
+A dictionary of device ips and list of monitored channels
+.TP
+.B Return type
+dict
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ec = Conductor()
+>>> print ec.getConductors()
+{\(aq10.16.27.20\(aq: \(aq[5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]\(aq}
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B class AgentDan.Delta
+.INDENT 7.0
+.TP
+.B class Delta
+.UNINDENT
+.sp
+A generic class library to create an instance of Delta for monitoring and configuration
+.INDENT 7.0
+.TP
+.B Delta.checkStatus()
+Class method to retrieve individual channels from Delta and
+compare last state to current state. Based on comparison, trigger
+or resolve alerts based on incident_key
+.INDENT 7.0
+.TP
+.B Returns
+A list containing a status code and status message
+.TP
+.B Return type
+list
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ec = Delta()
+>>> results = ec.checkStatus()
+>>> print results
+[200, \(aqDelta: Check completed successfully!\(aq]
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Delta.getChannel()
+Class method to retrieve individual channel attributes
+.INDENT 7.0
+.TP
+.B Returns
+A dictionary for each Delta containing a dictionary of a channels details
+.TP
+.B Return type
+dict
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ec = Delta()
+>>> results = ec.getChannel()
+>>> print type(results)
+<type \(aqdict\(aq>
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Delta.getChannels()
+Class method to retrieve list of channel from all configured Elemental Deltas
+.INDENT 7.0
+.TP
+.B Returns
+A dictionary for each Delta containing a dictionary of each channels details
+.TP
+.B Return type
+dict
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ec = Delta()
+>>> results = ec.getChannels()
+>>> print results[\(aq10.16.27.20\(aq][0]
+200
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Delta.getDeltas()
+.INDENT 7.0
+.TP
+.B getDeltas()
+.UNINDENT
+.sp
+Returns the device names and addresses from the configuration file section defined for [Elemental Delta]
+.INDENT 7.0
+.TP
+.B Returns
+A dictionary of device ips and list of monitored channels
+.TP
+.B Return type
+dict
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ec = Delta()
+>>> print ec.getDeltas()
+{\(aq10.16.255.21\(aq: \(aq[364,366]\(aq, \(aq10.16.255.22\(aq: \(aq[68]\(aq}
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B class AgentDan.Envivio
+.INDENT 7.0
+.TP
+.B class Envivio
+.UNINDENT
+.sp
+A generic class library to create an instance of Envivio for monitoring and configuration
+.INDENT 7.0
+.TP
+.B Envivio.getEnvivios()
+.INDENT 7.0
+.TP
+.B getEnvivios()
+.UNINDENT
+.sp
+Returns the device names and addresses from the configuration file section defined for [Elemental Envivio]
+.INDENT 7.0
+.TP
+.B Returns
+A list of device ips
+.TP
+.B Return type
+list
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> eh = Envivio()
+>>> print eh.getEnvivios()
+{\(aq10.16.27.26\(aq: \(aq[]\(aq, \(aq10.16.27.27\(aq: \(aq[]\(aq}
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.TP
+.B class AgentDan.Live
+.INDENT 7.0
+.TP
+.B class Live
+.UNINDENT
+.sp
+A generic class library to create an instance of Live for monitoring and configuration
+.INDENT 7.0
+.TP
+.B Live.checkStatus()
+Class method to retrieve individual channels from Live and
+compare last state to current state. Based on comparison, trigger
+or resolve alerts based on incident_key
+.INDENT 7.0
+.TP
+.B Returns
+A list containing a status code and status message
+.TP
+.B Return type
+list
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ed = Live()
+>>> results = ed.checkStatus()
+>>> print results
+[200, \(aqLive: Check completed successfully!\(aq]
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Live.getChannel()
+Class method to retrieve individual channel attributes
+.INDENT 7.0
+.TP
+.B Returns
+A dictionary for each Live containing a dictionary of a channels details
+.TP
+.B Return type
+dict
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ed = Live()
+>>> results = ed.getChannel()
+>>> print type(results)
+<type \(aqdict\(aq>
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Live.getChannels()
+Class method to retrieve list of channel from all configured Elemental Lives
+.INDENT 7.0
+.TP
+.B Returns
+A dictionary for each Live containing a dictionary of each channels details
+.TP
+.B Return type
+dict
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ed = Live()
+>>> results = ed.getChannels()
+>>> print results[\(aq10.16.27.21\(aq][0]
+200
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Live.getLives()
+.INDENT 7.0
+.TP
+.B getLives()
+.UNINDENT
+.sp
+Returns the device names and addresses from the configuration file section defined for [Elemental Live]
+.INDENT 7.0
+.TP
+.B Returns
+A dictionary of device ips and list of monitored channels
+.TP
+.B Return type
+dict
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ed = Live()
+>>> print ed.getLives()
+{\(aq10.16.27.21\(aq: \(aq[235,236,237,238,239,240,241,242,243,244]\(aq, \(aq10.16.27.22\(aq: \(aq[243,244,245,246,247,248,249,250,251,254]\(aq, \(aq10.16.27.23\(aq: \(aq[154,155,156,157,158,159,160,162,163]\(aq}
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH ALERT MODULE
+.INDENT 0.0
+.TP
+.B class Alert.Alert(alertId, alertType, started_at, user, address=\(aq\(aq)
+.INDENT 7.0
+.TP
+.B class Alert
+.UNINDENT
+.sp
+A class library to provide access to PagerDuty generated alerts
+.INDENT 7.0
+.TP
+.B Alert.__getitem__(key)
+.INDENT 7.0
+.TP
+.B __getitem__(key)
+.UNINDENT
+.sp
+Returns the value of an instance attribute
+.INDENT 7.0
+.TP
+.B Parameters
+\fBkey\fP (\fIstr\fP) \-\- The attribute name to retrieve
+.TP
+.B Returns
+The attribute\(aqs value
+.TP
+.B Return type
+str
+.TP
+.B Raises
+.INDENT 7.0
+.IP \(bu 2
+\fBAttributeError\fP \-\- If the attribute name provided does not exists
+.IP \(bu 2
+\fBException\fP \-\- General exception with logged results
+.UNINDENT
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> from User import User
+>>> u = User(\(aqBR549\(aq, \(aqJoe Smo\(aq, \(aqjsmo@heehaw.com\(aq, \(aqEastern Time (US & Canada)\(aq, \(aqblue\(aq, \(aquser\(aq, \(aqhttps://secure.gravatar.com/avatar/2e32280905f296791ed387cd0f61ec6b.png?d=mm&r=PG\(aq, \(aq/users/BR549\(aq, \(aqtrue\(aq)
+>>> alert = Alert(\(aqPWL7QXS\(aq, \(aqEmail\(aq, \(aq2013\-03\-06T15:28:50\-05:00\(aq, u, \(aqdwomack@encompass.tv\(aq)
+>>> print alert[\(aqaddress\(aq]
+dwomack@encompass.tv
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Alert.__init__(alertId, alertType, started_at, user, address=\(aq\(aq)
+.INDENT 7.0
+.TP
+.B __init__(alertId, alertType, started_at, user, address = \(aq\(aq)
+.UNINDENT
+.sp
+Instantiate an instance of Alert
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBalertId\fP (\fIstr\fP) \-\- The Alert generated id for this alert
+.IP \(bu 2
+\fBalertType\fP (\fIstr\fP) \-\- The type of alert generated
+.IP \(bu 2
+\fBstarted_at\fP (\fIdate/time\fP) \-\- The start date/time of the alert
+.IP \(bu 2
+\fBuser\fP (\fIobj\fP) \-\- The user account the alert was forwarded too
+.IP \(bu 2
+\fBaddress\fP (\fIstr\fP) \-\- The destination of the alert
+.UNINDENT
+.TP
+.B Returns
+Instance of Alert
+.TP
+.B Return type
+obj
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> from User import User
+>>> u = User(\(aqBR549\(aq, \(aqJoe Smo\(aq, \(aqjsmo@heehaw.com\(aq, \(aqEastern Time (US & Canada)\(aq, \(aqblue\(aq, \(aquser\(aq, \(aqhttps://secure.gravatar.com/avatar/2e32280905f296791ed387cd0f61ec6b.png?d=mm&r=PG\(aq, \(aq/users/BR549\(aq, \(aqtrue\(aq)
+>>> alert = Alert(\(aqPWL7QXS\(aq, \(aqEmail\(aq, \(aq2013\-03\-06T15:28:50\-05:00\(aq, u, \(aqdwomack@encompass.tv\(aq)
+>>> print repr(alert)
+Alert(\(aqPWL7QXS\(aq, \(aqEmail\(aq, \(aq2013\-03\-06T15:28:50\-05:00\(aq, \(aqUser: { \(aqavatar_url\(aq: \(aqhttps://secure.gravatar.com/avatar/2e32280905f296791ed387cd0f61ec6b.png?d=mm&r=PG\(aq,
+  \(aqcolor\(aq: \(aqblue\(aq,
+  \(aqemail\(aq: \(aqjsmo@heehaw.com\(aq,
+  \(aqinvitation_sent\(aq: \(aqtrue\(aq,
+  \(aqname\(aq: \(aqJoe Smo\(aq,
+  \(aqrole\(aq: \(aquser\(aq,
+  \(aqtime_zone\(aq: \(aqEastern Time (US & Canada)\(aq,
+  \(aquser_url\(aq: \(aq/users/BR549\(aq,
+  \(aquserid\(aq: \(aqBR549\(aq}\(aq, \(aqdwomack@encompass.tv\(aq)
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Alert.__module__ = \(aqAlert\(aq
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Alert.__repr__()
+.INDENT 7.0
+.TP
+.B __repr__()
+.UNINDENT
+.sp
+Return a string representation readable by the interpreter
+.INDENT 7.0
+.TP
+.B Returns
+Interpreter usable string representation
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> from User import User
+>>> u = User(\(aqBR549\(aq, \(aqJoe Smo\(aq, \(aqjsmo@heehaw.com\(aq, \(aqEastern Time (US & Canada)\(aq, \(aqblue\(aq, \(aquser\(aq, \(aqhttps://secure.gravatar.com/avatar/2e32280905f296791ed387cd0f61ec6b.png?d=mm&r=PG\(aq, \(aq/users/BR549\(aq, \(aqtrue\(aq)
+>>> alert = Alert(\(aqPWL7QXS\(aq, \(aqEmail\(aq, \(aq2013\-03\-06T15:28:50\-05:00\(aq, u, \(aqdwomack@encompass.tv\(aq)
+>>> print repr(alert)
+Alert(\(aqPWL7QXS\(aq, \(aqEmail\(aq, \(aq2013\-03\-06T15:28:50\-05:00\(aq, \(aqUser: { \(aqavatar_url\(aq: \(aqhttps://secure.gravatar.com/avatar/2e32280905f296791ed387cd0f61ec6b.png?d=mm&r=PG\(aq,
+  \(aqcolor\(aq: \(aqblue\(aq,
+  \(aqemail\(aq: \(aqjsmo@heehaw.com\(aq,
+  \(aqinvitation_sent\(aq: \(aqtrue\(aq,
+  \(aqname\(aq: \(aqJoe Smo\(aq,
+  \(aqrole\(aq: \(aquser\(aq,
+  \(aqtime_zone\(aq: \(aqEastern Time (US & Canada)\(aq,
+  \(aquser_url\(aq: \(aq/users/BR549\(aq,
+  \(aquserid\(aq: \(aqBR549\(aq}\(aq, \(aqdwomack@encompass.tv\(aq)
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Alert.__setitem__(key, value)
+.INDENT 7.0
+.TP
+.B __setitem__(key, value)
+.UNINDENT
+.sp
+Sets the value of an instance attribute
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBkey\fP (\fIstr\fP) \-\- The attribute name to set
+.IP \(bu 2
+\fBvalue\fP (\fIstr\fP) \-\- The value to assign to the attribute
+.UNINDENT
+.TP
+.B Returns
+The attribute\(aqs new value
+.TP
+.B Return type
+str
+.TP
+.B Raises
+.INDENT 7.0
+.IP \(bu 2
+\fBAttributeError\fP \-\- If the attribute name provided does not exists
+.IP \(bu 2
+\fBException\fP \-\- General exception with logged results
+.UNINDENT
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> from User import User
+>>> u = User(\(aqBR549\(aq, \(aqJoe Smo\(aq, \(aqjsmo@heehaw.com\(aq, \(aqEastern Time (US & Canada)\(aq, \(aqblue\(aq, \(aquser\(aq, \(aqhttps://secure.gravatar.com/avatar/2e32280905f296791ed387cd0f61ec6b.png?d=mm&r=PG\(aq, \(aq/users/BR549\(aq, \(aqtrue\(aq)
+>>> alert = Alert(\(aqPWL7QXS\(aq, \(aqEmail\(aq, \(aq2013\-03\-06T15:28:50\-05:00\(aq, u, \(aqdwomack@encompass.tv\(aq)
+>>> alert.__setitem__(\(aqaddress\(aq, \(aqjbob@encompass.tv\(aq)
+\(aqjbob@encompass.tv\(aq
+>>> print repr(alert)        
+Alert(\(aqPWL7QXS\(aq, \(aqEmail\(aq, \(aq2013\-03\-06T15:28:50\-05:00\(aq, \(aqUser: { \(aqavatar_url\(aq: \(aqhttps://secure.gravatar.com/avatar/2e32280905f296791ed387cd0f61ec6b.png?d=mm&r=PG\(aq,
+  \(aqcolor\(aq: \(aqblue\(aq,
+  \(aqemail\(aq: \(aqjsmo@heehaw.com\(aq,
+  \(aqinvitation_sent\(aq: \(aqtrue\(aq,
+  \(aqname\(aq: \(aqJoe Smo\(aq,
+  \(aqrole\(aq: \(aquser\(aq,
+  \(aqtime_zone\(aq: \(aqEastern Time (US & Canada)\(aq,
+  \(aquser_url\(aq: \(aq/users/BR549\(aq,
+  \(aquserid\(aq: \(aqBR549\(aq}\(aq, \(aqjbob@encompass.tv\(aq)
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Alert.__str__()
+.INDENT 7.0
+.TP
+.B __str__()
+.UNINDENT
+.sp
+Return a readable string representation of an instance
+.INDENT 7.0
+.TP
+.B Returns
+String representation of Alert instance
+.TP
+.B Return type
+str
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> from User import User
+>>> u = User(\(aqBR549\(aq, \(aqJoe Smo\(aq, \(aqjsmo@heehaw.com\(aq, \(aqEastern Time (US & Canada)\(aq, \(aqblue\(aq, \(aquser\(aq, \(aqhttps://secure.gravatar.com/avatar/2e32280905f296791ed387cd0f61ec6b.png?d=mm&r=PG\(aq, \(aq/users/BR549\(aq, \(aqtrue\(aq)
+>>> alert = Alert(\(aqPWL7QXS\(aq, \(aqEmail\(aq, \(aq2013\-03\-06T15:28:50\-05:00\(aq, u, \(aqdwomack@encompass.tv\(aq)
+>>> print alert
+Alert: { \(aqaddress\(aq: \(aqdwomack@encompass.tv\(aq,
+  \(aqalertId\(aq: \(aqPWL7QXS\(aq,
+  \(aqalertType\(aq: \(aqEmail\(aq,
+  \(aqstarted_at\(aq: \(aq2013\-03\-06T15:28:50\-05:00\(aq,
+  \(aquser\(aq: User(\(aqBR549\(aq, \(aqJoe Smo\(aq, \(aqjsmo@heehaw.com\(aq, \(aqEastern Time (US & Canada)\(aq, \(aqblue\(aq, \(aquser\(aq, \(aqhttps://secure.gravatar.com/avatar/2e32280905f296791ed387cd0f61ec6b.png?d=mm&r=PG\(aq, \(aq/users/BR549\(aq, \(aqtrue\(aq)}
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH CONDUCTOR MODULE
+.INDENT 0.0
+.TP
+.B class Conductor.Conductor
+.INDENT 7.0
+.TP
+.B class Conductor
+.UNINDENT
+.sp
+A generic class library to create an instance of Conductor for monitoring and configuration
+.INDENT 7.0
+.TP
+.B Conductor.__init__()
+.INDENT 7.0
+.TP
+.B __init__()
+.UNINDENT
+.sp
+Instantiate an instance of Conductor
+.INDENT 7.0
+.TP
+.B Returns
+Instance of Conductor
+.TP
+.B Return type
+obj
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ec = Conductor()
+>>> eval(repr(ec))
+Conductor()
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Conductor.__module__ = \(aqConductor\(aq
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Conductor.__repr__()
+.INDENT 7.0
+.TP
+.B __repr__()
+.UNINDENT
+.sp
+Return a string representation readable by the interpreter
+.INDENT 7.0
+.TP
+.B Returns
+Interpreter usable string representation
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ec = Conductor()
+>>> print repr(ec)
+Conductor()
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Conductor.__str__()
+.INDENT 7.0
+.TP
+.B __str__()
+.UNINDENT
+.sp
+Return a readable string representation of an instance
+.INDENT 7.0
+.TP
+.B Returns
+String representation of Conductor instance
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ec = Conductor()
+>>> print ec
+Conductor: { }
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Conductor.checkStatus()
+Class method to retrieve individual channels from Conductor and
+compare last state to current state. Based on comparison, trigger
+or resolve alerts based on incident_key
+.INDENT 7.0
+.TP
+.B Returns
+A list containing a status code and status message
+.TP
+.B Return type
+list
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ec = Conductor()
+>>> status, results = ec.checkStatus()
+>>> print results
+Conductor: Check completed successfully!
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Conductor.getChannel()
+Class method to retrieve individual channel attributes
+.INDENT 7.0
+.TP
+.B Returns
+A dictionary for each Conductor containing a dictionary of a channels details
+.TP
+.B Return type
+dict
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ec = Conductor()
+>>> results = ec.getChannel()
+>>> print type(results)
+<type \(aqdict\(aq>
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Conductor.getChannels()
+Class method to retrieve list of channel from all configured Elemental Conductors
+.INDENT 7.0
+.TP
+.B Returns
+A dictionary for each Conductor containing a dictionary of each channels details
+.TP
+.B Return type
+dict
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ec = Conductor()
+>>> results = ec.getChannels()
+>>> print results[\(aq10.16.27.20\(aq][0]
+200
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Conductor.getConductors()
+.INDENT 7.0
+.TP
+.B getConductors()
+.UNINDENT
+.sp
+Returns the device names and addresses from the configuration file section defined for [Elemental Conductor]
+.INDENT 7.0
+.TP
+.B Returns
+A dictionary of device ips and list of monitored channels
+.TP
+.B Return type
+dict
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ec = Conductor()
+>>> print ec.getConductors()
+{\(aq10.16.27.20\(aq: \(aq[5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]\(aq}
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH CONFIGFILE MODULE
+.INDENT 0.0
+.TP
+.B class ConfigFile.ConfigFile(fp)
+.INDENT 7.0
+.TP
+.B class ConfigFile
+.UNINDENT
+.sp
+A class library to create an instance of ConfigFile for configuration information
+.INDENT 7.0
+.TP
+.B ConfigFile.__getitem__(key)
+.INDENT 7.0
+.TP
+.B __getitem__(key)
+.UNINDENT
+.sp
+Returns the value of an instance attribute
+.INDENT 7.0
+.TP
+.B Parameters
+\fBkey\fP (\fIstr\fP) \-\- The attribute name to retrieve
+.TP
+.B Returns
+The attribute\(aqs value
+.TP
+.B Return type
+str
+.TP
+.B Raises AttributeError
+If the attribute name provided does not exists
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> cf = ConfigFile(\(aqAgentDan.conf\(aq)
+>>> print cf[\(aqfp\(aq]
+AgentDan.conf
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B ConfigFile.__init__(fp)
+.INDENT 7.0
+.TP
+.B __init__(fp)
+.UNINDENT
+.sp
+Instantiate an instance of ConfigFile
+.INDENT 7.0
+.TP
+.B Parameters
+\fBfp\fP (\fIstr\fP) \-\- Real path and filename to AgentDan.conf
+.TP
+.B Returns
+Instance of ConfigFile
+.TP
+.B Return type
+obj
+.TP
+.B Raises
+.INDENT 7.0
+.IP \(bu 2
+\fBIOError\fP \-\- If AgentDan.conf does not exists, or permission denied
+.IP \(bu 2
+\fBException\fP \-\- General exception with logged results
+.UNINDENT
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> cf = ConfigFile(\(aqAgentDan.conf\(aq)
+>>> eval(repr(cf))
+ConfigFile(\(aqAgentDan.conf\(aq)
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B ConfigFile.__module__ = \(aqConfigFile\(aq
+.UNINDENT
+.INDENT 7.0
+.TP
+.B ConfigFile.__repr__()
+.INDENT 7.0
+.TP
+.B __repr__()
+.UNINDENT
+.sp
+Return a string representation readable by the interpreter
+.INDENT 7.0
+.TP
+.B Returns
+Interpreter usable string representation
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> cf = ConfigFile(\(aqAgentDan.conf\(aq)
+>>> print repr(cf)
+ConfigFile(\(aqAgentDan.conf\(aq)
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B ConfigFile.__setitem__(key, value)
+.INDENT 7.0
+.TP
+.B __setitem__(key, value)
+.UNINDENT
+.sp
+Sets the value of an instance attribute
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBkey\fP (\fIstr\fP) \-\- The attribute name to set
+.IP \(bu 2
+\fBvalue\fP (\fIstr\fP) \-\- The value to assign to the attribute
+.UNINDENT
+.TP
+.B Returns
+The attribute\(aqs new value
+.TP
+.B Return type
+str
+.TP
+.B Raises
+.INDENT 7.0
+.IP \(bu 2
+\fBAttributeError\fP \-\- If the attribute name provided does not exists
+.IP \(bu 2
+\fBException\fP \-\- General exception with logged results
+.UNINDENT
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> cf = ConfigFile(\(aqAgentDan.conf\(aq)
+>>> cf.__setitem__(\(aqfp\(aq, \(aqDevice.conf\(aq)
+\(aqDevice.conf\(aq
+>>> print cf[\(aqfp\(aq]
+Device.conf
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B ConfigFile.__str__()
+.INDENT 7.0
+.TP
+.B __str__()
+.UNINDENT
+.sp
+Return a readable string representation of an instance
+.INDENT 7.0
+.TP
+.B Returns
+String representation of ConfigFile instance
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> cf = ConfigFile(\(aqAgentDan.conf\(aq)
+>>> print cf
+ConfigFile: { \(aqfp\(aq: \(aqAgentDan.conf\(aq}
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B ConfigFile.getConfig(section)
+.INDENT 7.0
+.TP
+.B getConfig(section)
+.UNINDENT
+.sp
+Return a dictionary of config name and config value within provided section
+.INDENT 7.0
+.TP
+.B Parameters
+\fBsection\fP (\fIstr\fP) \-\- Section within configuration file to retrieve key/value pair
+.TP
+.B Returns
+Dictionary containing config item name and value
+.TP
+.B Return type
+dict{\(aqitem key\(aq,\(aqitem value\(aq}
+.TP
+.B Raises
+.INDENT 7.0
+.IP \(bu 2
+\fBConfigParser.NoSectionError\fP \-\- Section does not exists in configuration file
+.IP \(bu 2
+\fBNameError\fP \-\- Key does not exists in section of configuration file
+.IP \(bu 2
+\fBTypeError\fP \-\- Value type is incorrect for requested key
+.IP \(bu 2
+\fBException\fP \-\- General exception with logged results
+.UNINDENT
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> Config = ConfigFile(\(aqDevice.conf\(aq)
+>>> pdConfig = Config.getConfig(\(aqPagerDuty\(aq)
+>>> subdomain = pdConfig[\(aqsubdomain\(aq]
+>>> print subdomain
+encompass\-digital\-media
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B ConfigFile.getState()
+.INDENT 7.0
+.TP
+.B getState()
+.UNINDENT
+.sp
+Return a dictionary created from a JSON file containing 
+channel and previous states for devices and monitored channels 
+defined in Device.conf
+.INDENT 7.0
+.TP
+.B Returns
+JSON string containing read from JSON file
+.TP
+.B Return type
+str
+.TP
+.B Raises
+.INDENT 7.0
+.IP \(bu 2
+\fBIOError\fP \-\- JSON file does not exists, so create it and return empty lastState dictionary
+.IP \(bu 2
+\fBValueError\fP \-\- JSON string in file is mailformed or empty, so return empty lastState dictionary
+.IP \(bu 2
+\fBException\fP \-\- General exception with logged results
+.UNINDENT
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> cf = ConfigFile(\(aqconductor.json\(aq)
+>>> lastState = cf.getState()
+>>> print lastState
+{u\(aq10.16.27.20\(aq: {u\(aq11\(aq: u\(aqrunning\(aq, u\(aq10\(aq: u\(aqrunning\(aq, u\(aq13\(aq: u\(aqrunning\(aq, u\(aq12\(aq: u\(aqrunning\(aq, u\(aq15\(aq: u\(aqrunning\(aq, u\(aq14\(aq: u\(aqrunning\(aq, u\(aq17\(aq: u\(aqrunning\(aq, u\(aq16\(aq: u\(aqrunning\(aq, u\(aq19\(aq: u\(aqrunning\(aq, u\(aq18\(aq: u\(aqrunning\(aq, u\(aq6\(aq: u\(aqrunning\(aq, u\(aq22\(aq: u\(aqrunning\(aq, u\(aq5\(aq: u\(aqrunning\(aq, u\(aq8\(aq: u\(aqrunning\(aq, u\(aq7\(aq: u\(aqrunning\(aq, u\(aq24\(aq: u\(aqrunning\(aq, u\(aq9\(aq: u\(aqrunning\(aq, u\(aq20\(aq: u\(aqrunning\(aq, u\(aq23\(aq: u\(aqrunning\(aq, u\(aq21\(aq: u\(aqrunning\(aq}}
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B ConfigFile.setState(currentState)
+.INDENT 7.0
+.TP
+.B setState()
+.UNINDENT
+.sp
+Write a dictionary to a JSON file containing 
+channel and previous states for devices and monitored channels 
+defined in Device.conf
+.INDENT 7.0
+.TP
+.B Returns
+List contain status code and status message of state write to file
+.TP
+.B Return type
+list
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> cf = ConfigFile(\(aqconductor.json\(aq)
+>>> lastState = cf.getState()
+>>> print lastState
+{u\(aq10.16.27.20\(aq: {u\(aq11\(aq: u\(aqrunning\(aq, u\(aq10\(aq: u\(aqrunning\(aq, u\(aq13\(aq: u\(aqrunning\(aq, u\(aq12\(aq: u\(aqrunning\(aq, u\(aq15\(aq: u\(aqrunning\(aq, u\(aq14\(aq: u\(aqrunning\(aq, u\(aq17\(aq: u\(aqrunning\(aq, u\(aq16\(aq: u\(aqrunning\(aq, u\(aq19\(aq: u\(aqrunning\(aq, u\(aq18\(aq: u\(aqrunning\(aq, u\(aq6\(aq: u\(aqrunning\(aq, u\(aq22\(aq: u\(aqrunning\(aq, u\(aq5\(aq: u\(aqrunning\(aq, u\(aq8\(aq: u\(aqrunning\(aq, u\(aq7\(aq: u\(aqrunning\(aq, u\(aq24\(aq: u\(aqrunning\(aq, u\(aq9\(aq: u\(aqrunning\(aq, u\(aq20\(aq: u\(aqrunning\(aq, u\(aq23\(aq: u\(aqrunning\(aq, u\(aq21\(aq: u\(aqrunning\(aq}}
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH CONNECT MODULE
+.INDENT 0.0
+.TP
+.B class Connect.Connect(service=\(aq\(aq)
+.INDENT 7.0
+.TP
+.B class Connect
+.UNINDENT
+.sp
+A generic class library to support connections to various RESTful APIs
+.INDENT 7.0
+.TP
+.B Connect.__getitem__(key)
+.INDENT 7.0
+.TP
+.B __getitem__(key)
+.UNINDENT
+.sp
+Returns the value of an instance attribute
+.INDENT 7.0
+.TP
+.B Parameters
+\fBkey\fP (\fIstr\fP) \-\- The attribute name to retrieve
+.TP
+.B Returns
+The attribute\(aqs value
+.TP
+.B Return type
+str
+.TP
+.B Raises
+.INDENT 7.0
+.IP \(bu 2
+\fBAttributeError\fP \-\- If the attribute name provided does not exists
+.IP \(bu 2
+\fBException\fP \-\- General exception with logged results
+.UNINDENT
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> con = Connect(\(aqPagerDuty\(aq)
+>>> print con[\(aqservice\(aq]
+PagerDuty
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Connect.__init__(service=\(aq\(aq)
+.INDENT 7.0
+.TP
+.B __init__(service=\(aqPagerDuty\(aq)
+.UNINDENT
+.sp
+Instantiate an instance of Connect
+.INDENT 7.0
+.TP
+.B Parameters
+\fBservice\fP (\fIPagerDuty|Conductor\fP) \-\- The name of the service to connect too
+.TP
+.B Returns
+Instance of Connect
+.TP
+.B Return type
+obj
+.TP
+.B Raises
+.INDENT 7.0
+.IP \(bu 2
+\fBIOError\fP \-\- If AgentDan.conf does not exists, or permission denied
+.IP \(bu 2
+\fBTypeError\fP \-\- Value type is incorrect for requested key
+.IP \(bu 2
+\fBException\fP \-\- General exception with logged results
+.UNINDENT
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> con = Connect(\(aqPagerDuty\(aq)
+>>> eval(repr(con))
+Connect(\(aqPagerDuty\(aq)
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Connect.__module__ = \(aqConnect\(aq
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Connect.__repr__()
+.INDENT 7.0
+.TP
+.B __repr__()
+.UNINDENT
+.sp
+Return a string representation readable by the interpreter
+.INDENT 7.0
+.TP
+.B Returns
+Interpreter usable string representation
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> from Connect import Connect
+>>> con = Connect(\(aqPagerDuty\(aq)
+>>> print repr(con)
+Connect(\(aqPagerDuty\(aq)
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Connect.__setitem__(key, value)
+.INDENT 7.0
+.TP
+.B __setitem__(key, value)
+.UNINDENT
+.sp
+Sets the value of an instance attribute
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBkey\fP (\fIstr\fP) \-\- The attribute name to set
+.IP \(bu 2
+\fBvalue\fP (\fIstr\fP) \-\- The value to assign to the attribute
+.UNINDENT
+.TP
+.B Returns
+The attribute\(aqs new value
+.TP
+.B Return type
+str
+.TP
+.B Raises
+.INDENT 7.0
+.IP \(bu 2
+\fBAttributeError\fP \-\- If the attribute name provided does not exists
+.IP \(bu 2
+\fBException\fP \-\- General exception with logged results
+.UNINDENT
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> con = Connect()
+>>> con.__setitem__(\(aqservice\(aq, \(aqConductor\(aq)
+\(aqConductor\(aq
+>>> print con[\(aqservice\(aq]
+Conductor
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Connect.__str__()
+.INDENT 7.0
+.TP
+.B __str__()
+.UNINDENT
+.sp
+Return a readable string representation of an instance
+.INDENT 7.0
+.TP
+.B Returns
+String representation of Connect instance
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> con = Connect(\(aqPagerDuty\(aq)
+>>> print con
+Connect: { \(aqkey\(aq: \(aqyz8bPMfGX1GBqV6yqVkT\(aq,
+  \(aqservice\(aq: \(aqPagerDuty\(aq,
+  \(aqsubdomain\(aq: \(aqencompass\-digital\-media\(aq}
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Connect.get(path, payload, address=\(aq\(aq)
+.INDENT 7.0
+.TP
+.B get(path, payload, address=)
+.UNINDENT
+.sp
+Returns a json string containing the results of the API query
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBpath\fP (\fIstr\fP) \-\- URL path to the API resource
+.IP \(bu 2
+\fBpayload\fP (\fIstr\fP) \-\- JSON formatted API parameters
+.UNINDENT
+.TP
+.B Returns
+Status code of request and the JSON formatted response from API
+.TP
+.B Return type
+dict{\(aqstatus_code\(aq,\(aqJSON string\(aq}
+.TP
+.B Raises
+.INDENT 7.0
+.IP \(bu 2
+\fBConnectionError\fP \-\- In case of network problem (e.g. DNS failure, refused connection, etc)
+.IP \(bu 2
+\fBHTTPError\fP \-\- In the event of the rare invalid HTTP response
+.IP \(bu 2
+\fBTooManyRedirects\fP \-\- If a request times out, a Timeout exception is raised. If a request exceeds the configured number of maximum redirections
+.IP \(bu 2
+\fBException\fP \-\- General exception with logged results
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.INDENT 3.5
+.SH TODO
+.sp
+Handle Connection, HTTP and Redirects exceptions.
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> import requests
+>>> import json
+>>> import datetime
+>>> from Connect import Connect
+>>> days = 1
+>>> path = \(aq/api/v1/incidents\(aq
+>>> since = datetime.datetime.now() \- datetime.timedelta(days=days)
+>>> since = since.strftime(\(aq%Y\-%m\-%d\(aq)
+>>> until = datetime.datetime.now().strftime(\(aq%Y\-%m\-%d\(aq)
+>>> status = \(aqresolved\(aq
+>>> payload = {\(aqsince\(aq:since,\(aquntil\(aq:until,\(aqstatus\(aq:status}
+>>> con = Connect(\(aqPagerDuty\(aq)
+>>> status, response = con.get(path, payload)                
+>>> print status
+200
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Connect.post(payload)
+.INDENT 7.0
+.TP
+.B post(path, payload)
+.UNINDENT
+.sp
+Post a json string update to an API query
+.INDENT 7.0
+.TP
+.B Parameters
+\fBpayload\fP (\fIstr\fP) \-\- JSON formatted API parameters
+.TP
+.B Returns
+Status code of request and the JSON formatted response from API
+.TP
+.B Return type
+dict{\(aqstatus_code\(aq,\(aqJSON string\(aq}
+.TP
+.B Raises
+.INDENT 7.0
+.IP \(bu 2
+\fBConnectionError\fP \-\- In case of network problem (e.g. DNS failure, refused connection, etc)
+.IP \(bu 2
+\fBHTTPError\fP \-\- In the event of the rare invalid HTTP response
+.IP \(bu 2
+\fBTooManyRedirects\fP \-\- If a request times out, a Timeout exception is raised. If a request exceeds the configured number of maximum redirections
+.IP \(bu 2
+\fBException\fP \-\- General exception with logged results
+.UNINDENT
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> import requests
+>>> import json
+>>> import datetime
+>>> from Connect import Connect
+>>> days = 1
+>>> path = \(aq/api/v1/incidents\(aq
+>>> payload = json.dumps({"service_key": \(aqbr549\(aq, "incident_key": \(aqnonexist\(aq, "event_type": \(aqresolve\(aq, "description": \(aqdoctest\(aq, "details": \(aqnone\(aq,})
+>>> con = Connect(\(aqPagerDuty\(aq)
+>>> status = con.post(payload)
+>>> print status[0]
+400
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH DELTA MODULE
+.INDENT 0.0
+.TP
+.B class Delta.Delta
+.INDENT 7.0
+.TP
+.B class Delta
+.UNINDENT
+.sp
+A generic class library to create an instance of Delta for monitoring and configuration
+.INDENT 7.0
+.TP
+.B Delta.__init__()
+.INDENT 7.0
+.TP
+.B __init__()
+.UNINDENT
+.sp
+Instantiate an instance of Delta
+.INDENT 7.0
+.TP
+.B Returns
+Instance of Delta
+.TP
+.B Return type
+obj
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ec = Delta()
+>>> eval(repr(ec))
+Delta()
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Delta.__module__ = \(aqDelta\(aq
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Delta.__repr__()
+.INDENT 7.0
+.TP
+.B __repr__()
+.UNINDENT
+.sp
+Return a string representation readable by the interpreter
+.INDENT 7.0
+.TP
+.B Returns
+Interpreter usable string representation
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ec = Delta()
+>>> print repr(ec)
+Delta()
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Delta.__str__()
+.INDENT 7.0
+.TP
+.B __str__()
+.UNINDENT
+.sp
+Return a readable string representation of an instance
+.INDENT 7.0
+.TP
+.B Returns
+String representation of Delta instance
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ec = Delta()
+>>> print ec
+Delta: { }
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Delta.checkStatus()
+Class method to retrieve individual channels from Delta and
+compare last state to current state. Based on comparison, trigger
+or resolve alerts based on incident_key
+.INDENT 7.0
+.TP
+.B Returns
+A list containing a status code and status message
+.TP
+.B Return type
+list
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ec = Delta()
+>>> results = ec.checkStatus()
+>>> print results
+[200, \(aqDelta: Check completed successfully!\(aq]
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Delta.getChannel()
+Class method to retrieve individual channel attributes
+.INDENT 7.0
+.TP
+.B Returns
+A dictionary for each Delta containing a dictionary of a channels details
+.TP
+.B Return type
+dict
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ec = Delta()
+>>> results = ec.getChannel()
+>>> print type(results)
+<type \(aqdict\(aq>
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Delta.getChannels()
+Class method to retrieve list of channel from all configured Elemental Deltas
+.INDENT 7.0
+.TP
+.B Returns
+A dictionary for each Delta containing a dictionary of each channels details
+.TP
+.B Return type
+dict
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ec = Delta()
+>>> results = ec.getChannels()
+>>> print results[\(aq10.16.27.20\(aq][0]
+200
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Delta.getDeltas()
+.INDENT 7.0
+.TP
+.B getDeltas()
+.UNINDENT
+.sp
+Returns the device names and addresses from the configuration file section defined for [Elemental Delta]
+.INDENT 7.0
+.TP
+.B Returns
+A dictionary of device ips and list of monitored channels
+.TP
+.B Return type
+dict
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ec = Delta()
+>>> print ec.getDeltas()
+{\(aq10.16.255.21\(aq: \(aq[364,366]\(aq, \(aq10.16.255.22\(aq: \(aq[68]\(aq}
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH ENVIVIO MODULE
+.INDENT 0.0
+.TP
+.B class Envivio.Envivio
+.INDENT 7.0
+.TP
+.B class Envivio
+.UNINDENT
+.sp
+A generic class library to create an instance of Envivio for monitoring and configuration
+.INDENT 7.0
+.TP
+.B Envivio.__init__()
+.INDENT 7.0
+.TP
+.B __init__()
+.UNINDENT
+.sp
+Instantiate an instance of Envivio
+.INDENT 7.0
+.TP
+.B Returns
+Instance of Envivio
+.TP
+.B Return type
+obj
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> eh = Envivio()
+>>> eval(repr(eh))
+Envivio()
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Envivio.__module__ = \(aqEnvivio\(aq
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Envivio.__repr__()
+.INDENT 7.0
+.TP
+.B __repr__()
+.UNINDENT
+.sp
+Return a string representation readable by the interpreter
+.INDENT 7.0
+.TP
+.B Returns
+Interpreter usable string representation
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> eh = Envivio()
+>>> print repr(eh)
+Envivio()
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Envivio.__str__()
+.INDENT 7.0
+.TP
+.B __str__()
+.UNINDENT
+.sp
+Return a readable string representation of an instance
+.INDENT 7.0
+.TP
+.B Returns
+String representation of Envivio instance
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> eh = Envivio()
+>>> print eh
+Envivio: { }
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Envivio.getEnvivios()
+.INDENT 7.0
+.TP
+.B getEnvivios()
+.UNINDENT
+.sp
+Returns the device names and addresses from the configuration file section defined for [Elemental Envivio]
+.INDENT 7.0
+.TP
+.B Returns
+A list of device ips
+.TP
+.B Return type
+list
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> eh = Envivio()
+>>> print eh.getEnvivios()
+{\(aq10.16.27.26\(aq: \(aq[]\(aq, \(aq10.16.27.27\(aq: \(aq[]\(aq}
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH INCIDENT MODULE
+.INDENT 0.0
+.TP
+.B class Incident.Incident(incident_number, status, urgency, created_on, html_url, incident_key, service, escalation_policy, last_status_change_by, last_status_change_on, trigger_summary_data, trigger_details_html_url, pending_actions=[], assigned_to=[])
+.INDENT 7.0
+.TP
+.B class Incident
+.UNINDENT
+.sp
+A class library to provide PagerDuty Inicident datatype
+.INDENT 7.0
+.TP
+.B Incident.__getitem__(key)
+.INDENT 7.0
+.TP
+.B __getitem__(key)
+.UNINDENT
+.sp
+Returns the value of an instance attribute
+.INDENT 7.0
+.TP
+.B Parameters
+\fBkey\fP (\fIstr\fP) \-\- The attribute name to retrieve
+.TP
+.B Returns
+The attribute\(aqs value
+.TP
+.B Return type
+str
+.TP
+.B Raises AttributeError
+If the attribute name provided does not exists
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> inc = Incident(64, \(aqresolved\(aq, \(aqlow\(aq, \(aq2016\-02\-28T10:02:41Z\(aq, \(aqhttps://encompass\-digital\-media.pagerduty.com/incidents/PK35GXP\(aq, \(aqPort\-Channel22 (DMC\-leaf1) Down\(aq, \(aqservice\(aq, \(aqesclation_policy\(aq, \(aq\(aq, \(aq2016\-02\-28T10:04:37Z\(aq, \(aqtrigger_summary_data\(aq, \(aqhttps://encompass\-digital\-media.pagerduty.com/incidents/PK35GXP/log_entries/Q201PYPWVMT7BA\(aq, pending_actions = [], assigned_to = [])
+>>> print inc[\(aqstatus\(aq]
+resolved
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Incident.__init__(incident_number, status, urgency, created_on, html_url, incident_key, service, escalation_policy, last_status_change_by, last_status_change_on, trigger_summary_data, trigger_details_html_url, pending_actions=[], assigned_to=[])
+.INDENT 7.0
+.TP
+.B __init__(incident_number, status, urgency, created_on, html_url, incident_key, service, escalation_policy, last_status_change_by, last_status_change_on, trigger_summary_data, trigger_details_html_url, pending_actions = [], assigned_to = [])
+.UNINDENT
+.sp
+Instantiate an instance of Incident
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBincident_number\fP (\fIint\fP) \-\- The number of the incident. This is unique across your account
+.IP \(bu 2
+\fBstatus\fP (\fIstr\fP) \-\- The current status of the incident. Valid statuses are: (triggered, acknowledged, resolved)
+.IP \(bu 2
+\fBurgency\fP (\fIstr\fP) \-\- current urgency of the incident. Valid urgencies are: (high, low)
+.IP \(bu 2
+\fBcreated_on\fP (\fIdate/time\fP) \-\- The date/time the incident was triggered
+.IP \(bu 2
+\fBhtml_url\fP (\fIstr\fP) \-\- The PagerDuty website URL where the incident can be viewed and further actions taken. This is not the resource URL
+.IP \(bu 2
+\fBincident_key\fP (\fIstr\fP) \-\- The incident\(aqs de\-duplication key. See the PagerDuty Integration API docs for further details
+.IP \(bu 2
+\fBservice\fP (\fIobj\fP) \-\- The PagerDuty service that the incident belongs to. The service will contain fields of its own
+.IP \(bu 2
+\fBescalation_policy\fP (\fIobj\fP) \-\- The escalation policy that the incident belongs to. The policy will contain fields of its own
+.IP \(bu 2
+\fBlast_status_change_by\fP (\fIobj\fP) \-\- The user who is responsible for the incident\(aqs last status change
+.IP \(bu 2
+\fBlast_status_change_on\fP (\fIdate/time\fP) \-\- The date/time the incident\(aqs status last changed
+.IP \(bu 2
+\fBtrigger_summary_data\fP (\fIobj\fP) \-\- Some condensed information regarding the initial event that triggered this incident
+.IP \(bu 2
+\fBtrigger_details_html_url\fP (\fIstr\fP) \-\- The PagerDuty website URL where the full details regarding the initial event that triggered this incident can be found. (This is not the resource URL.)
+.IP \(bu 2
+\fBassigned_to\fP (\fIarr\fP) \-\- The list of assignments of the incident
+.IP \(bu 2
+\fBpending_actions\fP (\fIarr\fP) \-\- The list of pending_actions on the incident
+.UNINDENT
+.TP
+.B Returns
+Instance of User
+.TP
+.B Return type
+obj
+.UNINDENT
+.INDENT 7.0
+.INDENT 3.5
+.SH TODO
+.sp
+Incorporate service, escalation_policy, last_status_changed_by, triggered_summary_data object data and assigned_to, pending_actions array data
+.UNINDENT
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> inc = Incident(64, \(aqresolved\(aq, \(aqlow\(aq, \(aq2016\-02\-28T10:02:41Z\(aq, \(aqhttps://encompass\-digital\-media.pagerduty.com/incidents/PK35GXP\(aq, \(aqPort\-Channel22 (DMC\-leaf1) Down\(aq, \(aqservice\(aq, \(aqesclation_policy\(aq, \(aq\(aq, \(aq2016\-02\-28T10:04:37Z\(aq, \(aqtrigger_summary_data\(aq, \(aqhttps://encompass\-digital\-media.pagerduty.com/incidents/PK35GXP/log_entries/Q201PYPWVMT7BA\(aq, pending_actions = [], assigned_to = [])
+>>> eval(repr(inc))
+Incident(\(aq64\(aq, \(aqresolved\(aq, \(aqlow\(aq, \(aq2016\-02\-28T10:02:41Z\(aq, \(aqhttps://encompass\-digital\-media.pagerduty.com/incidents/PK35GXP\(aq, \(aqPort\-Channel22 (DMC\-leaf1) Down\(aq, \(aqservice\(aq, \(aqesclation_policy\(aq, \(aq\(aq, \(aq2016\-02\-28T10:04:37Z\(aq, \(aqtrigger_summary_data\(aq, \(aqhttps://encompass\-digital\-media.pagerduty.com/incidents/PK35GXP/log_entries/Q201PYPWVMT7BA\(aq, \(aq[]\(aq, \(aq[]\(aq)
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Incident.__module__ = \(aqIncident\(aq
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Incident.__repr__()
+.INDENT 7.0
+.TP
+.B __repr__()
+.UNINDENT
+.sp
+Return a string representation readable by the interpreter
+.INDENT 7.0
+.TP
+.B Returns
+Interpreter usable string representation
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> inc = Incident(64, \(aqresolved\(aq, \(aqlow\(aq, \(aq2016\-02\-28T10:02:41Z\(aq, \(aqhttps://encompass\-digital\-media.pagerduty.com/incidents/PK35GXP\(aq, \(aqPort\-Channel22 (DMC\-leaf1) Down\(aq, \(aqservice\(aq, \(aqesclation_policy\(aq, \(aq\(aq, \(aq2016\-02\-28T10:04:37Z\(aq, \(aqtrigger_summary_data\(aq, \(aqhttps://encompass\-digital\-media.pagerduty.com/incidents/PK35GXP/log_entries/Q201PYPWVMT7BA\(aq, pending_actions = [], assigned_to = [])
+>>> print repr(inc)
+Incident(\(aq64\(aq, \(aqresolved\(aq, \(aqlow\(aq, \(aq2016\-02\-28T10:02:41Z\(aq, \(aqhttps://encompass\-digital\-media.pagerduty.com/incidents/PK35GXP\(aq, \(aqPort\-Channel22 (DMC\-leaf1) Down\(aq, \(aqservice\(aq, \(aqesclation_policy\(aq, \(aq\(aq, \(aq2016\-02\-28T10:04:37Z\(aq, \(aqtrigger_summary_data\(aq, \(aqhttps://encompass\-digital\-media.pagerduty.com/incidents/PK35GXP/log_entries/Q201PYPWVMT7BA\(aq, \(aq[]\(aq, \(aq[]\(aq)
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Incident.__setitem__(key, value)
+.INDENT 7.0
+.TP
+.B __setitem__(key, value)
+.UNINDENT
+.sp
+Sets the value of an instance attribute
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBkey\fP (\fIstr\fP) \-\- The attribute name to set
+.IP \(bu 2
+\fBvalue\fP (\fIstr\fP) \-\- The value to assign to the attribute
+.UNINDENT
+.TP
+.B Returns
+The attribute\(aqs new value
+.TP
+.B Return type
+str
+.TP
+.B Raises AttributeError
+If the attribute name provided does not exists
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> inc = Incident(64, \(aqresolved\(aq, \(aqlow\(aq, \(aq2016\-02\-28T10:02:41Z\(aq, \(aqhttps://encompass\-digital\-media.pagerduty.com/incidents/PK35GXP\(aq, \(aqPort\-Channel22 (DMC\-leaf1) Down\(aq, \(aqservice\(aq, \(aqesclation_policy\(aq, \(aq\(aq, \(aq2016\-02\-28T10:04:37Z\(aq, \(aqtrigger_summary_data\(aq, \(aqhttps://encompass\-digital\-media.pagerduty.com/incidents/PK35GXP/log_entries/Q201PYPWVMT7BA\(aq, pending_actions = [], assigned_to = [])
+>>> inc.__setitem__(\(aqstatus\(aq, \(aqtriggered\(aq)
+\(aqtriggered\(aq
+>>> print inc[\(aqstatus\(aq]
+triggered
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Incident.__str__()
+.INDENT 7.0
+.TP
+.B __str__()
+.UNINDENT
+.sp
+Return a readable string representation of an instance
+.INDENT 7.0
+.TP
+.B Returns
+String representation of Incident instance
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> inc = Incident(64, \(aqresolved\(aq, \(aqlow\(aq, \(aq2016\-02\-28T10:02:41Z\(aq, \(aqhttps://encompass\-digital\-media.pagerduty.com/incidents/PK35GXP\(aq, \(aqPort\-Channel22 (DMC\-leaf1) Down\(aq, \(aqservice\(aq, \(aqesclation_policy\(aq, \(aq\(aq, \(aq2016\-02\-28T10:04:37Z\(aq, \(aqtrigger_summary_data\(aq, \(aqhttps://encompass\-digital\-media.pagerduty.com/incidents/PK35GXP/log_entries/Q201PYPWVMT7BA\(aq, pending_actions = [], assigned_to = [])
+>>> print inc
+Incident: { \(aqassigned_to\(aq: [],
+  \(aqcreated_on\(aq: \(aq2016\-02\-28T10:02:41Z\(aq,
+  \(aqescalation_policy\(aq: \(aqesclation_policy\(aq,
+  \(aqhtml_url\(aq: \(aqhttps://encompass\-digital\-media.pagerduty.com/incidents/PK35GXP\(aq,
+  \(aqincident_key\(aq: \(aqPort\-Channel22 (DMC\-leaf1) Down\(aq,
+  \(aqincident_number\(aq: 64,
+  \(aqlast_status_change_by\(aq: \(aq\(aq,
+  \(aqlast_status_change_on\(aq: \(aq2016\-02\-28T10:04:37Z\(aq,
+  \(aqpending_actions\(aq: [],
+  \(aqservice\(aq: \(aqservice\(aq,
+  \(aqstatus\(aq: \(aqresolved\(aq,
+  \(aqtrigger_details_html_url\(aq: \(aqhttps://encompass\-digital\-media.pagerduty.com/incidents/PK35GXP/log_entries/Q201PYPWVMT7BA\(aq,
+  \(aqtrigger_summary_data\(aq: \(aqtrigger_summary_data\(aq,
+  \(aqurgency\(aq: \(aqlow\(aq}
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH LIVE MODULE
+.INDENT 0.0
+.TP
+.B class Live.Live
+.INDENT 7.0
+.TP
+.B class Live
+.UNINDENT
+.sp
+A generic class library to create an instance of Live for monitoring and configuration
+.INDENT 7.0
+.TP
+.B Live.__init__()
+.INDENT 7.0
+.TP
+.B __init__()
+.UNINDENT
+.sp
+Instantiate an instance of Live
+.INDENT 7.0
+.TP
+.B Returns
+Instance of Live
+.TP
+.B Return type
+obj
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ed = Live()
+>>> eval(repr(ed))
+Live()
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Live.__module__ = \(aqLive\(aq
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Live.__repr__()
+.INDENT 7.0
+.TP
+.B __repr__()
+.UNINDENT
+.sp
+Return a string representation readable by the interpreter
+.INDENT 7.0
+.TP
+.B Returns
+Interpreter usable string representation
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ed = Live()
+>>> print repr(ed)
+Live()
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Live.__str__()
+.INDENT 7.0
+.TP
+.B __str__()
+.UNINDENT
+.sp
+Return a readable string representation of an instance
+.INDENT 7.0
+.TP
+.B Returns
+String representation of Live instance
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ed = Live()
+>>> print ed
+Live: { }
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Live.checkStatus()
+Class method to retrieve individual channels from Live and
+compare last state to current state. Based on comparison, trigger
+or resolve alerts based on incident_key
+.INDENT 7.0
+.TP
+.B Returns
+A list containing a status code and status message
+.TP
+.B Return type
+list
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ed = Live()
+>>> results = ed.checkStatus()
+>>> print results
+[200, \(aqLive: Check completed successfully!\(aq]
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Live.getChannel()
+Class method to retrieve individual channel attributes
+.INDENT 7.0
+.TP
+.B Returns
+A dictionary for each Live containing a dictionary of a channels details
+.TP
+.B Return type
+dict
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ed = Live()
+>>> results = ed.getChannel()
+>>> print type(results)
+<type \(aqdict\(aq>
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Live.getChannels()
+Class method to retrieve list of channel from all configured Elemental Lives
+.INDENT 7.0
+.TP
+.B Returns
+A dictionary for each Live containing a dictionary of each channels details
+.TP
+.B Return type
+dict
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ed = Live()
+>>> results = ed.getChannels()
+>>> print results[\(aq10.16.27.21\(aq][0]
+200
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B Live.getLives()
+.INDENT 7.0
+.TP
+.B getLives()
+.UNINDENT
+.sp
+Returns the device names and addresses from the configuration file section defined for [Elemental Live]
+.INDENT 7.0
+.TP
+.B Returns
+A dictionary of device ips and list of monitored channels
+.TP
+.B Return type
+dict
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> ed = Live()
+>>> print ed.getLives()
+{\(aq10.16.27.21\(aq: \(aq[235,236,237,238,239,240,241,242,243,244]\(aq, \(aq10.16.27.22\(aq: \(aq[243,244,245,246,247,248,249,250,251,254]\(aq, \(aq10.16.27.23\(aq: \(aq[154,155,156,157,158,159,160,162,163]\(aq}
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH MEDIAEXCEL MODULE
+.INDENT 0.0
+.TP
+.B class MediaExcel.MediaExcel
+.INDENT 7.0
+.TP
+.B class MediaExcel
+.UNINDENT
+.sp
+A generic class library to create an instance of MediaExcel for monitoring and configuration
+.INDENT 7.0
+.TP
+.B MediaExcel.__init__()
+.INDENT 7.0
+.TP
+.B __init__()
+.UNINDENT
+.sp
+Instantiate an instance of MediaExcel
+.INDENT 7.0
+.TP
+.B Returns
+Instance of MediaExcel
+.TP
+.B Return type
+obj
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> me = MediaExcel()
+>>> eval(repr(me))
+MediaExcel()
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B MediaExcel.__module__ = \(aqMediaExcel\(aq
+.UNINDENT
+.INDENT 7.0
+.TP
+.B MediaExcel.__repr__()
+.INDENT 7.0
+.TP
+.B __repr__()
+.UNINDENT
+.sp
+Return a string representation readable by the interpreter
+.INDENT 7.0
+.TP
+.B Returns
+Interpreter usable string representation
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> me = MediaExcel()
+>>> print repr(me)
+MediaExcel()
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B MediaExcel.__str__()
+.INDENT 7.0
+.TP
+.B __str__()
+.UNINDENT
+.sp
+Return a readable string representation of an instance
+.INDENT 7.0
+.TP
+.B Returns
+String representation of MediaExcel instance
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> me = MediaExcel()
+>>> print me
+MediaExcel: { }
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B MediaExcel.getMediaExcels()
+.INDENT 7.0
+.TP
+.B getMediaExcels()
+.UNINDENT
+.sp
+Returns the device names and addresses from the configuration file section defined for [Elemental MediaExcel]
+.INDENT 7.0
+.TP
+.B Returns
+A list of device ips
+.TP
+.B Return type
+list
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> me = MediaExcel()
+>>> print me.getMediaExcels()
+{\(aq10.1.1.1\(aq: \(aq[]\(aq}
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH PAGERDUTY MODULE
+.INDENT 0.0
+.TP
+.B class PagerDuty.PagerDuty
+.INDENT 7.0
+.TP
+.B class PagerDuty
+.UNINDENT
+.sp
+A class library to enable integration with PagerDuty API
+.INDENT 7.0
+.TP
+.B PagerDuty.__getitem__(key)
+.INDENT 7.0
+.TP
+.B __getitem__(key)
+.UNINDENT
+.sp
+Returns the value of an instance attribute
+.INDENT 7.0
+.TP
+.B Parameters
+\fBkey\fP (\fIstr\fP) \-\- The attribute name to retrieve
+.TP
+.B Returns
+The attribute\(aqs value
+.TP
+.B Return type
+str
+.TP
+.B Raises
+.INDENT 7.0
+.IP \(bu 2
+\fBAttributeError\fP \-\- If the attribute name provided does not exists
+.IP \(bu 2
+\fBException\fP \-\- General exception with logged results
+.UNINDENT
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> pd = PagerDuty()
+>>> print pd[\(aqservice_key\(aq]
+88fd1c835c374369b81ff95b9e4c07de
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B PagerDuty.__init__()
+.INDENT 7.0
+.TP
+.B __init__()
+.UNINDENT
+.sp
+Instantiate an instance of PagerDuty
+.INDENT 7.0
+.TP
+.B Returns
+Instance of PagerDuty
+.TP
+.B Return type
+obj
+.TP
+.B Raises
+.INDENT 7.0
+.IP \(bu 2
+\fBIOError\fP \-\- If AgentDan.conf does not exists, or permission denied
+.IP \(bu 2
+\fBTypeError\fP \-\- Value type is incorrect for requested key
+.IP \(bu 2
+\fBException\fP \-\- General exception with logged results
+.UNINDENT
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> pd = PagerDuty()
+>>> eval(repr(pd))
+PagerDuty()
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B PagerDuty.__module__ = \(aqPagerDuty\(aq
+.UNINDENT
+.INDENT 7.0
+.TP
+.B PagerDuty.__repr__()
+.INDENT 7.0
+.TP
+.B __repr__()
+.UNINDENT
+.sp
+Return a string representation readable by the interpreter
+.INDENT 7.0
+.TP
+.B Returns
+Interpreter usable string representation
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> pd = PagerDuty()
+>>> print repr(pd)
+PagerDuty()
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B PagerDuty.__setitem__(key, value)
+.INDENT 7.0
+.TP
+.B __setitem__(key, value)
+.UNINDENT
+.sp
+Sets the value of an instance attribute
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBkey\fP (\fIstr\fP) \-\- The attribute name to set
+.IP \(bu 2
+\fBvalue\fP (\fIstr\fP) \-\- The value to assign to the attribute
+.UNINDENT
+.TP
+.B Returns
+The attribute\(aqs new value
+.TP
+.B Return type
+str
+.TP
+.B Raises
+.INDENT 7.0
+.IP \(bu 2
+\fBAttributeError\fP \-\- If the attribute name provided does not exists
+.IP \(bu 2
+\fBException\fP \-\- General exception with logged results
+.UNINDENT
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> pd = PagerDuty()
+>>> pd.__setitem__(\(aqservice_key\(aq, \(aqservicekey\(aq)
+\(aqservicekey\(aq
+>>> print pd[\(aqservice_key\(aq]
+servicekey
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B PagerDuty.__str__()
+.INDENT 7.0
+.TP
+.B __str__()
+.UNINDENT
+.sp
+Return a readable string representation of an instance
+.INDENT 7.0
+.TP
+.B Returns
+String representation of PagerDuty instance
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> pd = PagerDuty()
+>>> print pd
+PagerDuty: { \(aqservice_key\(aq: \(aq88fd1c835c374369b81ff95b9e4c07de\(aq}
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B PagerDuty.getAlerts(days)
+.INDENT 7.0
+.TP
+.B getAlerts(days)
+.UNINDENT
+.sp
+Retrieve a list of alerts via PagerDuty API
+.INDENT 7.0
+.TP
+.B Parameters
+\fBdays\fP (\fIstr\fP) \-\- Number of days to query for results
+.TP
+.B Returns
+JSON string (JSON string)
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> pd = PagerDuty()
+>>> alerts = pd.getAlerts(1)
+>>> print type(alerts)
+<type \(aqlist\(aq>
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B PagerDuty.getIncidents(days, urgency=\(aq\(aq, status=\(aq\(aq)
+.INDENT 7.0
+.TP
+.B getIncidents(days, urgency=\(aq\(aq, status=\(aq\(aq)
+.UNINDENT
+.sp
+Retrieve a list of incidents via PagerDuty API
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBdays\fP (\fIstr\fP) \-\- Number of days to query for results
+.IP \(bu 2
+\fBurgency\fP (\fIstr\fP) \-\- Optional Urgency to query Possible values (high, low)
+.IP \(bu 2
+\fBstatus\fP (\fIstr\fP) \-\- Optional Status to query. Possible values (triggered, acknowledged, resolved)
+.UNINDENT
+.TP
+.B Returns
+JSON string (JSON string)
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> pd = PagerDuty()
+>>> incidents = pd.getIncidents(1)
+>>> print type(incidents)
+<type \(aqlist\(aq>
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B PagerDuty.resolve(incident_key, description, details)
+.INDENT 7.0
+.TP
+.B resolve(incident_key, description, details)
+.UNINDENT
+.sp
+Resolve an incident through PagerDuty API via Connect module
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBincident_key\fP \-\- A unique string which provides de\-duplication
+.IP \(bu 2
+\fBdescription\fP (\fIstr\fP) \-\- A detailed description of the resolution
+.IP \(bu 2
+\fBdetails\fP (\fIstr\fP) \-\- Full details regarding incident resolution
+.UNINDENT
+.TP
+.B Returns
+JSON string (JSON string)
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> #pd = PagerDuty()
+>>> #incident_key = "srv01/HTTP"
+>>> #description = "Channel {0} is currently {1} on {2}".format(\(aq21\(aq,\(aqrunning\(aq,\(aq10.16.27.20\(aq)
+>>> #details = {"Resolved at":"2016\-03\-18 16:00",}
+>>> #trigstat, trigres = pd.resolve(incident_key, description, details)
+>>> #trigres = json.loads(trigres)
+>>> #print trigres
+{u\(aqstatus\(aq: u\(aqsuccess\(aq, u\(aqmessage\(aq: u\(aqEvent processed\(aq, u\(aqincident_key\(aq: u\(aqsrv01/HTTP\(aq}
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B PagerDuty.trigger(incident_key, description, client, url, details)
+.INDENT 7.0
+.TP
+.B trigger(incident_key, description, client, url, details)
+.UNINDENT
+.sp
+Trigger an incident through PagerDuty API via Connect module
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBincident_key\fP \-\- A unique string which provides de\-duplication
+.IP \(bu 2
+\fBdescription\fP (\fIstr\fP) \-\- A detailed description of the incident
+.IP \(bu 2
+\fBclient\fP (\fIstr\fP) \-\- Affected device name
+.IP \(bu 2
+\fBurl\fP (\fIstr\fP) \-\- URL to affected device adminstrative interface
+.IP \(bu 2
+\fBdetails\fP (\fIstr\fP) \-\- Full details regarding the initial event that triggered this incident
+.UNINDENT
+.TP
+.B Returns
+JSON string (JSON string)
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> #pd = PagerDuty()
+>>> #incident_key = "srv01/HTTP"
+>>> #description = "Channel {0} is currently {1} on {2}".format(\(aq21\(aq,\(aqidle\(aq,\(aq10.16.27.20\(aq)
+>>> #client = "SkyMX Conductor"
+>>> #url = "http://10.16.27.20"
+>>> #details = {"hls\-source": "http://10.16.27.221/out/u/skymx_ch21.m3u8","udl\-dest1":"udp://230.16.28.20:52101",}
+>>> #trigstat, trigres = pd.trigger(incident_key, description, client, url, details)
+>>> #trigres = json.loads(trigres)
+>>> #print trigres
+{u\(aqstatus\(aq: u\(aqsuccess\(aq, u\(aqmessage\(aq: u\(aqEvent processed\(aq, u\(aqincident_key\(aq: u\(aqsrv01/HTTP\(aq}
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.SH USER MODULE
+.INDENT 0.0
+.TP
+.B class User.User(userid, name, email, time_zone, color, role, avatar_url, user_url, invitation_sent)
+.INDENT 7.0
+.TP
+.B class User
+.UNINDENT
+.sp
+A class library to create an instance of User supporting PagerDuty responses
+.INDENT 7.0
+.TP
+.B User.__getitem__(key)
+.INDENT 7.0
+.TP
+.B __getitem__(key)
+.UNINDENT
+.sp
+Returns the value of an instance attribute
+.INDENT 7.0
+.TP
+.B Parameters
+\fBkey\fP (\fIstr\fP) \-\- The attribute name to retrieve
+.TP
+.B Returns
+The attribute\(aqs value
+.TP
+.B Return type
+str
+.TP
+.B Raises
+.INDENT 7.0
+.IP \(bu 2
+\fBAttributeError\fP \-\- If the attribute name provided does not exists
+.IP \(bu 2
+\fBException\fP \-\- General exception with logged results
+.UNINDENT
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> u = User(\(aqBR549\(aq, \(aqJoe Smo\(aq, \(aqjsmo@heehaw.com\(aq, \(aqEastern Time (US & Canada)\(aq, \(aqblue\(aq, \(aquser\(aq, \(aqhttps://secure.gravatar.com/avatar/2e32280905f296791ed387cd0f61ec6b.png?d=mm&r=PG\(aq, \(aq/users/BR549\(aq, \(aqtrue\(aq)
+>>> print u[\(aqcolor\(aq]
+blue
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B User.__init__(userid, name, email, time_zone, color, role, avatar_url, user_url, invitation_sent)
+/
+.. py:method:: User.__init__(userid, name, email, time_zone, color, role, avatar_url, user_url, invitation_sent)
+.sp
+Instantiate an instance of User
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBuserid\fP (\fIstr\fP) \-\- The PagerDuty generated id for this user
+.IP \(bu 2
+\fBname\fP (\fIstr\fP) \-\- The PagerDuty username
+.IP \(bu 2
+\fBemail\fP (\fIstr\fP) \-\- The user\(aqs email address
+.IP \(bu 2
+\fBtime_zone\fP (\fIstr\fP) \-\- The user\(aqs local timezone
+.IP \(bu 2
+\fBcolor\fP (\fIstr\fP) \-\- The user\(aqs color designation in PagerDuty
+.IP \(bu 2
+\fBrole\fP (\fIstr\fP) \-\- The user\(aqs assigned role
+.IP \(bu 2
+\fBavatar_url\fP (\fIstr\fP) \-\- The path to the user\(aqs avatar
+.IP \(bu 2
+\fBuser_url\fP (\fIstr\fP) \-\- The path to the user\(aqs account
+.IP \(bu 2
+\fBinvitation_sent\fP (\fIbool\fP) \-\- Whether a user\(aqs invite has been sent after user creation
+.UNINDENT
+.TP
+.B Returns
+Instance of User
+.TP
+.B Return type
+obj
+.TP
+.B Raises Exception
+General exception with logged results
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> u = User(\(aqBR549\(aq, \(aqJoe Smo\(aq, \(aqjsmo@heehaw.com\(aq, \(aqEastern Time (US & Canada)\(aq, \(aqblue\(aq, \(aquser\(aq, \(aqhttps://secure.gravatar.com/avatar/2e32280905f296791ed387cd0f61ec6b.png?d=mm&r=PG\(aq, \(aq/users/BR549\(aq, \(aqtrue\(aq)
+>>> eval(repr(u))
+User(\(aqBR549\(aq, \(aqJoe Smo\(aq, \(aqjsmo@heehaw.com\(aq, \(aqEastern Time (US & Canada)\(aq, \(aqblue\(aq, \(aquser\(aq, \(aqhttps://secure.gravatar.com/avatar/2e32280905f296791ed387cd0f61ec6b.png?d=mm&r=PG\(aq, \(aq/users/BR549\(aq, \(aqtrue\(aq)
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B User.__module__ = \(aqUser\(aq
+.UNINDENT
+.INDENT 7.0
+.TP
+.B User.__repr__()
+.INDENT 7.0
+.TP
+.B __repr__()
+.UNINDENT
+.sp
+Return a string representation readable by the interpreter
+.INDENT 7.0
+.TP
+.B Returns
+Interpreter usable string representation
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> u = User(\(aqBR549\(aq, \(aqJoe Smo\(aq, \(aqjsmo@heehaw.com\(aq, \(aqEastern Time (US & Canada)\(aq, \(aqblue\(aq, \(aquser\(aq, \(aqhttps://secure.gravatar.com/avatar/2e32280905f296791ed387cd0f61ec6b.png?d=mm&r=PG\(aq, \(aq/users/BR549\(aq, \(aqtrue\(aq)
+>>> print repr(u)
+User(\(aqBR549\(aq, \(aqJoe Smo\(aq, \(aqjsmo@heehaw.com\(aq, \(aqEastern Time (US & Canada)\(aq, \(aqblue\(aq, \(aquser\(aq, \(aqhttps://secure.gravatar.com/avatar/2e32280905f296791ed387cd0f61ec6b.png?d=mm&r=PG\(aq, \(aq/users/BR549\(aq, \(aqtrue\(aq)
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B User.__setitem__(key, value)
+.INDENT 7.0
+.TP
+.B __setitem__(key, value)
+.UNINDENT
+.sp
+Sets the value of an instance attribute
+.INDENT 7.0
+.TP
+.B Parameters
+.INDENT 7.0
+.IP \(bu 2
+\fBkey\fP (\fIstr\fP) \-\- The attribute name to set
+.IP \(bu 2
+\fBvalue\fP (\fIstr\fP) \-\- The value to assign to the attribute
+.UNINDENT
+.TP
+.B Returns
+The attribute\(aqs new value
+.TP
+.B Return type
+str
+.TP
+.B Raises
+.INDENT 7.0
+.IP \(bu 2
+\fBAttributeError\fP \-\- If the attribute name provided does not exists
+.IP \(bu 2
+\fBException\fP \-\- General exception with logged results
+.UNINDENT
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> u = User(\(aqBR549\(aq, \(aqJoe Smo\(aq, \(aqjsmo@heehaw.com\(aq, \(aqEastern Time (US & Canada)\(aq, \(aqblue\(aq, \(aquser\(aq, \(aqhttps://secure.gravatar.com/avatar/2e32280905f296791ed387cd0f61ec6b.png?d=mm&r=PG\(aq, \(aq/users/BR549\(aq, \(aqtrue\(aq)
+>>> u.__setitem__(\(aqname\(aq, \(aqJoe Smart\(aq)
+\(aqJoe Smart\(aq
+>>> print repr(u)
+User(\(aqBR549\(aq, \(aqJoe Smart\(aq, \(aqjsmo@heehaw.com\(aq, \(aqEastern Time (US & Canada)\(aq, \(aqblue\(aq, \(aquser\(aq, \(aqhttps://secure.gravatar.com/avatar/2e32280905f296791ed387cd0f61ec6b.png?d=mm&r=PG\(aq, \(aq/users/BR549\(aq, \(aqtrue\(aq)
+.ft P
+.fi
+.UNINDENT
+.INDENT 7.0
+.TP
+.B User.__str__()
+.INDENT 7.0
+.TP
+.B __str__()
+.UNINDENT
+.sp
+Return a readable string representation of an instance
+.INDENT 7.0
+.TP
+.B Returns
+String representation of User instance
+.TP
+.B Return type
+str
+.TP
+.B Example
+.UNINDENT
+.sp
+.nf
+.ft C
+>>> u = User(\(aqBR549\(aq, \(aqJoe Smo\(aq, \(aqjsmo@heehaw.com\(aq, \(aqEastern Time (US & Canada)\(aq, \(aqblue\(aq, \(aquser\(aq, \(aqhttps://secure.gravatar.com/avatar/2e32280905f296791ed387cd0f61ec6b.png?d=mm&r=PG\(aq, \(aq/users/BR549\(aq, \(aqtrue\(aq)
+>>> print u
+User: { \(aqavatar_url\(aq: \(aqhttps://secure.gravatar.com/avatar/2e32280905f296791ed387cd0f61ec6b.png?d=mm&r=PG\(aq,
+  \(aqcolor\(aq: \(aqblue\(aq,
+  \(aqemail\(aq: \(aqjsmo@heehaw.com\(aq,
+  \(aqinvitation_sent\(aq: \(aqtrue\(aq,
+  \(aqname\(aq: \(aqJoe Smo\(aq,
+  \(aqrole\(aq: \(aquser\(aq,
+  \(aqtime_zone\(aq: \(aqEastern Time (US & Canada)\(aq,
+  \(aquser_url\(aq: \(aq/users/BR549\(aq,
+  \(aquserid\(aq: \(aqBR549\(aq}
+.ft P
+.fi
+.UNINDENT
+.UNINDENT
+.INDENT 0.0
+.INDENT 3.5
+.sp
+Handle Connection, HTTP and Redirects exceptions.
+.UNINDENT
+.UNINDENT
+.sp
+(The \fI\%original entry\fP is located in  /home/mobaxterm/MyDocuments/Code/Python/agentdan/AgentDan/Connect.py:docstring of Connect.Connect.get, line 16.)
+.INDENT 0.0
+.INDENT 3.5
+.sp
+Incorporate service, escalation_policy, last_status_changed_by, triggered_summary_data object data and assigned_to, pending_actions array data
+.UNINDENT
+.UNINDENT
+.sp
+(The \fI\%original entry\fP is located in  /home/mobaxterm/MyDocuments/Code/Python/agentdan/AgentDan/Incident.py:docstring of Incident.Incident.__init__, line 36.)
+.INDENT 0.0
+.INDENT 3.5
+.sp
+How to use and/or extended AgentDan functionality.
+.UNINDENT
+.UNINDENT
+.sp
+(The \fI\%original entry\fP is located in  /drives/C/Home/Documents/Code/Python/agentdan/docs/source/Usage.rst, line 9.)
+.INDENT 0.0
+.INDENT 3.5
+.sp
+Handle Connection, HTTP and Redirects exceptions.
+.UNINDENT
+.UNINDENT
+.sp
+(The \fI\%original entry\fP is located in  /home/mobaxterm/MyDocuments/Code/Python/agentdan/AgentDan/__init__.py:docstring of AgentDan.Connect.get, line 16.)
+.INDENT 0.0
+.IP \(bu 2
+\fIgenindex\fP
+.IP \(bu 2
+\fImodindex\fP
+.IP \(bu 2
+\fIsearch\fP
+.UNINDENT
+.SH AUTHOR
+Doug Womack
+.SH COPYRIGHT
+2016, Doug Womack
+.\" Generated by docutils manpage writer.
+.

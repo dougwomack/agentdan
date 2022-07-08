@@ -1,0 +1,63 @@
+#!/bin/bash
+# AgentDan daemon
+# chkconfig: 345 20 80
+# description: AgentDan daemon
+# processname: AgentDan.py
+
+DAEMON_PATH="/opt/agentdan"
+
+DAEMON=AgentDan.py
+DAEMONOPTS=""
+
+NAME=AgentDan
+DESC="AgentDan Monitoring Agent"
+PIDFILE=$DAEMON_PATH/run/$NAME.pid
+SCRIPTNAME=/etc/init.d/$NAME
+
+case "$1" in
+start)
+    printf "%-50s" "Starting $NAME"
+    cd $DAEMON_PATH
+    PID=`./$DAEMON $DAEMONOPTS > /dev/null 2>&1 & echo $!`
+    if [ -z $PID ]; then
+        printf "%s\n" "Fail"
+    else
+        echo $PID > $PIDFILE
+        printf "%s\n" "$NAME is on the job!!!"
+    fi
+;;
+status)
+    printf "%-50s" "Calling $NAME..."
+    if [ -f $PIDFILE ]; then
+        PID=`cat $PIDFILE`
+        if [ -z "`ps -ef | grep ${PID} | grep -v grep`" ]; then
+            printf "%s\n" "$NAME is getting coffee, but pidfile exists!"
+        else
+            echo "$NAME is still taking care of business!"
+        fi
+    else
+        printf "%s\n" "$NAME is not on duty!"
+    fi
+;;
+stop)
+    printf "%-50s" "Stopping $NAME"
+        PID=`cat $PIDFILE`
+        cd $DAEMON_PATH
+    if [ -f $PIDFILE ]; then
+        kill -HUP $PID
+        printf "%s\n" "$NAME is taking some needed vacation!!!"
+        rm -f $PIDFILE
+    else
+        printf "%s\n" "pidfile not found"
+    fi
+;;
+
+restart)
+    $0 stop
+    $0 start
+;;
+
+*)
+    echo "Usage: $0 {status|start|stop|restart}"
+    exit 1
+esac
